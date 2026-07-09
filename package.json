@@ -1,0 +1,15 @@
+{
+  "name": "email-pixel-tracker",
+  "version": "1.0.0",
+  "description": "Email tracking pixel learning project",
+  "license": "ISC",
+  "author": "Plorbus",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
