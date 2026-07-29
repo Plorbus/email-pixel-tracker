@@ -1,2 +1,7 @@
 node_modules/
 .idea/
+data.json
+.env
+tracker.db
+tracker.db-wal
+tracker.db-shm
