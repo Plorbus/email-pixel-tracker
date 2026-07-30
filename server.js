@@ -18,7 +18,7 @@ function escapeHtml(str){
 }
 function rowsHtml(){
     return Object.entries(emails).map(([id,email])=>{
-        const opens= emails.opens || [];
+        const opens= email.opens || [];
         const last = opens.length ? opens[opens.length -1].openedAt : '-';
         return `<tr> 
             <td>${escapeHtml(email.to)}</td>
@@ -87,16 +87,16 @@ function requireAuth(req,res,next){
     res.status(401).send('Authenticate failed.');
 }
 
-app.get('/new', (req,res) =>{
-    const to = req.query.to;
-    const id = crypto.randomUUID();
-    emails[id] = {to, createdAt: now(), opens:[] };
-
-    const PixelUrl = `${req.protocol}://${req.get('host')}/pixel/${id}`;
-    res.type('text/plain');
-    res.send(`<img src="${PixelUrl}" width="1" height="1" alt="">`);
-    saveData();
-});
+// app.get('/new', (req,res) =>{
+//     const to = req.query.to;
+//     const id = crypto.randomUUID();
+//     emails[id] = {to, createdAt: now(), opens:[] };
+//
+//     const PixelUrl = `${req.protocol}://${req.get('host')}/pixel/${id}`;
+//     res.type('text/plain');
+//     res.send(`<img src="${PixelUrl}" width="1" height="1" alt="">`);
+//     saveData();
+// });
 
 app.get('/results', requireAuth, (req,res) =>{
     res.json(emails);
@@ -127,28 +127,25 @@ app.get('/pixel/:id', (req,res) =>{
 
 
 
+//
+// app.get('/dashboard', requireAuth, (req, res) => {
+//     let html = `
+//     <h1>Tracking Dashboard</h1>
+//     <table border="1" cellpadding="6">
+//       <tr><th>Recipient</th><th>Tracking ID</th><th>Opens</th></tr>
+//   `;
+//
+//     for (const [id, email] of Object.entries(emails)) {
+//         const recipient = email.to || '(no recipient)';
+//         const openCount = email.opens.length;
+//         html += `<tr><td>${recipient}</td><td>${id}</td><td>${openCount}</td></tr>`;
+//     }
+//
+//     html += `</table>`;
+//
+//     res.send(html);
+// });
 
-app.get('/dashboard', requireAuth, (req, res) => {
-    let html = `
-    <h1>Tracking Dashboard</h1>
-    <table border="1" cellpadding="6">
-      <tr><th>Recipient</th><th>Tracking ID</th><th>Opens</th></tr>
-  `;
-
-    for (const [id, email] of Object.entries(emails)) {
-        const recipient = email.to || '(no recipient)';
-        const openCount = email.opens.length;
-        html += `<tr><td>${recipient}</td><td>${id}</td><td>${openCount}</td></tr>`;
-    }
-
-    html += `</table>`;
-
-    res.send(html);
-});
-
-app.listen(PORT,() => {
-    console.log(`Server listening on http://localhost:${PORT}`);
-});
 
 const nodemailer = require('nodemailer');
 
@@ -213,3 +210,7 @@ app.post('/admin/send',requireAuth, async (req,res) =>{
         res.redirect('/admin?error=' + encodeURIComponent(err.message));
     }
 })
+
+app.listen(PORT,() => {
+    console.log(`Server listening on http://localhost:${PORT}`);
+});
