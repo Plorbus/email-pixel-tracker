@@ -81,7 +81,7 @@ function createDb(path){
     function listEmails(){
         return selectList.all()
     }
-    
+
 
     return {createEmail, recordOpen, listEmails};
 }
