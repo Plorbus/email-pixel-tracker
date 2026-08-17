@@ -1,7 +1,7 @@
 const fs = require('fs');
 const {openDb} = require('./db');
 
-const SOURCE = 'data.json';
+const SOURCE = 'data.json.bak';
 const TARGET = 'tracker.db';
 
 
@@ -50,7 +50,7 @@ const openCount = db.prepare('SELECT COUNT(*) as n FROM opens').get().n;
 console.log(`target: ${emailCount} emails, ${openCount} opens`);
 
 if (emailCount !== ids.length || openCount !== expectedOpens) {
-    console.error('Data mismatch do not delete data.json')
+    console.error('Data mismatch do not delete data.json.bak')
     process.exit(1);
 }
 console.log('counts match');

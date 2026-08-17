@@ -16,7 +16,7 @@ function escapeHtml(str){
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
 }
 
-//lazy way to make sure atleast the first half of an email is valid before attempting a send
+//plausible checker for emails (lazy)
 function isPlausibleEmail(value){
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
@@ -41,7 +41,9 @@ app.get('/admin',requireAuth, (req,res) =>{
         <h1> send a tracked email</h1>
             ${banner}
         <form method="POST" action="/admin/send">
-            <input name="to" type="email" placeholder="recipient@example.com" required>
+            <input name="to" type="email" placeholder="test@example.com" required>
+            <input name="subject" type="text" placeholder="Email subject" required>
+            <textarea name="message" placeholder="Your message (HTML allowed)" rows="12" cols="80" style="resize: none" required></textarea>
             <button type="submit">Send</button>
         </form>
         <h2>Tracked Emails</h2>
@@ -133,9 +135,10 @@ const PUBLIC_URL = process.env.PUBLIC_URL || 'http://localhost:3000';
 
 
 
-
 app.post('/admin/send',requireAuth, async (req,res) =>{
     const to = req.body.to;
+    const subject = req.body.subject;
+    const message = req.body.message;
     if (!isPlausibleEmail(to)){
         return res.redirect('/admin?error=' + encodeURIComponent('invalid recipient address'));
     }
@@ -149,8 +152,8 @@ app.post('/admin/send',requireAuth, async (req,res) =>{
         await transporter.sendMail({
             from: process.env.GMAIL_USER,
             to,
-            subject: 'Testing my tracker',
-            html: `<p>Hey! Thanks for reading.</p>${pixel}`,   // HTML body carries the pixel
+            subject: subject,
+            html: `${message}${pixel}`,   // user's HTML body + tracking pixel
         });
         res.redirect('/admin?sent=' + encodeURIComponent(to));
     } catch (err) {
