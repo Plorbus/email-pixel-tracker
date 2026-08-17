@@ -1,6 +1,6 @@
 node_modules/
 .idea/
-data.json
+data.json.bak
 .env
 tracker.db
 tracker.db-wal
