@@ -55,6 +55,7 @@ app.get('/admin',requireAuth, (req,res) =>{
 });
 
 
+//hardening of security to prevent guesses via the first letter failing and decoding password
 function safeEqual(a,b){
     const ah = crypto.createHash('sha256').update(String(a)).digest();
     const bh = crypto.createHash('sha256').update(String(b)).digest();
@@ -153,7 +154,7 @@ app.post('/admin/send',requireAuth, async (req,res) =>{
             from: process.env.GMAIL_USER,
             to,
             subject: subject,
-            html: `${message}${pixel}`,   // user's HTML body + tracking pixel
+            html: `${message}${pixel}`,   // user's HTML body and the tracking pixel
         });
         res.redirect('/admin?sent=' + encodeURIComponent(to));
     } catch (err) {
