@@ -1,5 +1,9 @@
 const express = require('express');
 const app = express();
+// No ETags: a tracking pixel must never be revalidated from a cache. Without
+// this Express sends an ETag and answers 304, advertising the pixel as
+// cacheable content.
+app.disable('etag');
 app.use(express.urlencoded({ extended: false }));
 const PORT = 3000;
 const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
@@ -100,6 +104,12 @@ app.get('/pixel/:id', (req,res) =>{
     };
 
     res.set('Content-Type', 'image/gif');
+
+    // without this does not record future opens after gmail caches the image. gets around this
+    // should not record opens properly
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     res.send(PIXEL);
 
     try {
@@ -163,6 +173,9 @@ app.post('/admin/send',requireAuth, async (req,res) =>{
     }
 })
 
-app.listen(PORT,() => {
-    console.log(`Server listening on http://localhost:${PORT}`);
+// Bind loopback only. Tailscale Funnel connects to 127.0.0.1:3000 on the same
+// box, so nothing is lost, and the firewall stops being the only thing keeping
+// this off the network.
+app.listen(PORT, '127.0.0.1', () => {
+    console.log(`Server listening on http://127.0.0.1:${PORT}`);
 });
