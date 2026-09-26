@@ -42,16 +42,34 @@ app.get('/admin',requireAuth, (req,res) =>{
     if (req.query.sent) banner = `<p style="color:green"> ✓ Sent to ${escapeHtml(req.query.sent)}</p>`;
     if (req.query.error) banner = `<p style="color:red"> ✗ Failed ${escapeHtml(req.query.error)}</p>`;
     res.send(`
-        <h1> send a tracked email</h1>
+        <!DOCTYPE html>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Tracker</title>
+        <style>
+            body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 60rem; padding: 0 1rem; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.2rem; margin-top: 2rem; }
+            form { margin-bottom: 1rem; }
+            input, textarea { display: block; width: 100%; margin: .5rem 0; padding: .5rem;
+                              font: inherit; box-sizing: border-box; }
+            textarea { min-height: 12rem; }
+            button { padding: .5rem 1.5rem; font: inherit; cursor: pointer; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #ccc; padding: .5rem; text-align: left; }
+            th { background: #f4f4f4; }
+            code { font-size: .85em; color: #555; }
+        </style>
+        <h1>Send a tracked email</h1>
             ${banner}
         <form method="POST" action="/admin/send">
             <input name="to" type="email" placeholder="test@example.com" required>
             <input name="subject" type="text" placeholder="Email subject" required>
-            <textarea name="message" placeholder="Your message (HTML allowed)" rows="12" cols="80" style="resize: none" required></textarea>
+            <textarea name="message" placeholder="Your message (HTML allowed)" rows="12" cols="80" required></textarea>
             <button type="submit">Send</button>
         </form>
         <h2>Tracked Emails</h2>
-        <table border="1" cellpadding="6">
+        <table>
             <tr><th>Recipient</th><th>Tracking ID</th><th>Opens</th><th>Last Open</th></tr>
             ${rowsHtml()}
         </table>
