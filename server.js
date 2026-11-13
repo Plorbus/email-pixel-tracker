@@ -13,7 +13,7 @@ const db = createDb('tracker.db');
 const AUTH_USER = process.env.ADMIN_USER;
 const AUTH_PASS = process.env.ADMIN_PASS;
 
-
+// xss prevention, escapes user input so it shows as text instead of running as html/scripts
 function escapeHtml(str){
     return String(str)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -24,7 +24,7 @@ function escapeHtml(str){
 function isPlausibleEmail(value){
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
-
+//builds a table row per email: who received it, their id, open count, and the last open date
 function rowsHtml(){
     return db.listEmails().map((row) => {
         return `<tr>
@@ -85,10 +85,11 @@ function safeEqual(a,b){
 }
 
 
-
+// helper function that does what it says
 function now(){
     return new Date().toISOString();
 }
+
 function requireAuth(req,res,next){
     const header = req.get('authorization');
 
